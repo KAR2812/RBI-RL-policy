@@ -1,0 +1,13 @@
+{
+    "Total Macro Loss": 2.773145127883548,
+    "Inflation Loss": 2.4738175225723826,
+    "Unemployment Loss": 0.2927662807644352,
+    "Interest Rate Smoothness (Policy Stability)": 0.006561324546730718,
+    "Mean Return (RL Performance Score)": -5.246984057768317,
+    "Variance of Returns (Stability of Policy)": 0.0,
+    "Inflation Variance": 0.002401644131551913,
+    "Output Gap Variance": 0.0004562202488287623,
+    "Recovery Time After Shock": 0.0,
+    "Policy Reactivity": 0.008093364271803235,
+    "Policy Regret": 0.0
+}
