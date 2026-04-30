@@ -21,9 +21,12 @@ def run_us_evaluation_pipeline():
     
     try:
         config = DEFAULT_CONFIG
-        ppo_agent = RLAgentPolicy(config, model_path='outputs/models/best_model.zip')
+        # RLAgentPolicy automatically appends .zip
+        ppo_agent = RLAgentPolicy(config, model_path='outputs/models/best_model')
         if ppo_agent.model is not None:
-            policies['PPO'] = ppo_agent
+            policies['PPO'] = ppo_agent.model
+        else:
+            print("WARNING: ppo_agent.model is None after loading")
     except Exception as e:
         print(f"WARNING: Could not load PPO model. Error: {e}")
         

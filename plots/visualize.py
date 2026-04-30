@@ -7,7 +7,8 @@ import seaborn as sns
 
 from stable_baselines3.common.results_plotter import load_results, ts2xy
 from env.macro_env import MacroEnv
-from models.ppo_agent import load_ppo_agent
+from policies.rl_agent import RLAgentPolicy
+from config.config import DEFAULT_CONFIG
 from models.taylor_rule import TaylorRule, AggressiveTaylorRule, FixedInflationTargeting
 
 def generate_all_plots(results_dir='results', log_dir='outputs', plot_dir='plots'):
@@ -86,10 +87,11 @@ def plot_no_shock_comparison(plot_dir, log_dir):
         'Fixed IT': FixedInflationTargeting()
     }
     try:
-        ppo = load_ppo_agent(os.path.join(log_dir, 'ppo_monetary_policy.zip'))
-        policies['PPO'] = ppo
-    except:
-        pass
+        ppo = RLAgentPolicy(DEFAULT_CONFIG, model_path='outputs/models/best_model')
+        if ppo.model is not None:
+            policies['PPO'] = ppo.model
+    except Exception as e:
+        print(f"Skipping PPO in plot_no_shock_comparison: {e}")
         
     env.set_shock_scenario(None)
     
