@@ -20,7 +20,7 @@ from stable_baselines3.common.callbacks import (
 )
 
 from config.config import Config, DEFAULT_CONFIG
-from env.macro_env import MacroEconomicEnv
+from env.macro_env import MacroEnv
 from env.shocks import ShockScenarioParams
 
 
@@ -71,13 +71,13 @@ class RLAgentPolicy:
 
         # ── Vectorised training environment (4 parallel workers) ──────────────
         def make_env():
-            return MacroEconomicEnv(self.config, self.shock_params)
+            return MacroEnv(self.config, self.shock_params)
 
         train_env = make_vec_env(make_env, n_envs=4, seed=seed)
 
         # ── Evaluation environment (single, deterministic seed) ───────────────
         eval_env = make_vec_env(
-            lambda: MacroEconomicEnv(
+            lambda: MacroEnv(
                 self.config,
                 ShockScenarioParams(name="normal", seed=seed + 1000),
             ),

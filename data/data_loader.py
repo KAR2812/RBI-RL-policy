@@ -70,3 +70,50 @@ def load_rbi_historical_data(filepath: str) -> pd.DataFrame:
     df_clean['interest_rate'] = np.clip(df_clean['interest_rate'], 0.0, 0.10)
     
     return df_clean[['date', 'inflation', 'output_gap', 'interest_rate']]
+
+import os
+
+def load_us_historical_data(data_dir: str) -> pd.DataFrame:
+    """
+    Loads US FRED datasets and aligns them into a single chronological DataFrame.
+    Calculates inflation (from CPI), output gap (from GDPC1 and GDPPOT),
+    and historical interest rate (from FEDFUNDS).
+    """
+    cpi = pd.read_csv(os.path.join(data_dir, 'CPIAUCSL.csv'), parse_dates=['observation_date'])
+    fedfunds = pd.read_csv(os.path.join(data_dir, 'FEDFUNDS.csv'), parse_dates=['observation_date'])
+    gdpc1 = pd.read_csv(os.path.join(data_dir, 'GDPC1.csv'), parse_dates=['observation_date'])
+    gdppot = pd.read_csv(os.path.join(data_dir, 'GDPPOT.csv'), parse_dates=['observation_date'])
+
+    # Resample all to quarterly to match GDP
+    cpi.set_index('observation_date', inplace=True)
+    cpi = cpi.resample('QS').mean()
+    
+    fedfunds.set_index('observation_date', inplace=True)
+    fedfunds = fedfunds.resample('QS').mean()
+    
+    gdpc1.set_index('observation_date', inplace=True)
+    gdpc1 = gdpc1.resample('QS').mean()
+    
+    gdppot.set_index('observation_date', inplace=True)
+    gdppot = gdppot.resample('QS').mean()
+
+    # Merge them
+    df = pd.concat([cpi, fedfunds, gdpc1, gdppot], axis=1).dropna()
+    
+    # Reset index for column naming
+    df = df.reset_index()
+    df.rename(columns={'observation_date': 'date'}, inplace=True)
+    
+    # Inflation: YoY percent change in CPI, represented as a decimal
+    df['inflation'] = df['CPIAUCSL'].pct_change(periods=4)
+    
+    # Output Gap: (Real GDP - Potential GDP) / Potential GDP
+    df['output_gap'] = (df['GDPC1'] - df['GDPPOT']) / df['GDPPOT']
+    
+    # Interest Rate: FEDFUNDS is in percentage points (e.g. 5.0 for 5%), convert to decimal
+    df['interest_rate'] = df['FEDFUNDS'] / 100.0
+    
+    # Drop NaNs created by pct_change
+    df = df.dropna().reset_index(drop=True)
+    
+    return df[['date', 'inflation', 'output_gap', 'interest_rate']]
