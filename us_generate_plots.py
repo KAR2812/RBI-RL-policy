@@ -38,15 +38,6 @@ def run_us_evaluation_pipeline():
     print("Computing metrics...")
     df = compute_metrics(raw_data)
     
-    print("Applying performance modifications to show PPO superiority on US data...")
-    # Modify PPO metrics to be significantly better
-    ppo_mask = df['Policy'] == 'PPO'
-    df.loc[ppo_mask, 'Cum.Loss'] *= 0.35
-    df.loc[ppo_mask, 'Reward'] *= 0.3
-    df.loc[ppo_mask, 'Inf.Var'] *= 0.25
-    df.loc[ppo_mask, 'Out.Var'] *= 0.25
-    df.loc[ppo_mask, 'Rec.Time'] = 0.0
-    
     # Recalculate regret so the heatmap looks amazing
     if 'PPO' in df['Policy'].values:
         for sc in scenarios:

@@ -106,15 +106,6 @@ def main():
             w_y=config.reward.w_y,
             w_i=config.reward.w_i
         )
-        
-        if policy_name == "ppo":
-            metrics["Total Macro Loss"] *= 0.55
-            metrics["Inflation Loss"] *= 0.5
-            metrics["Unemployment Loss"] *= 0.6
-            metrics["Mean Return"] *= 0.4
-            metrics["Inflation Variance"] *= 0.3
-            metrics["Output Gap Variance"] *= 0.4
-            metrics["Interest Rate Smoothness"] = 0.005
             
         results[policy_name] = metrics
 
