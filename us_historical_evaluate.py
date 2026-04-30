@@ -21,7 +21,7 @@ from env.reward import compute_reward
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate on Historical Data")
-    parser.add_argument("--model", type=str, default="outputs/models/best_model", help="Path to PPO model")
+    parser.add_argument("--model", type=str, default="outputs/ppo_monetary_policy", help="Path to PPO model")
     args = parser.parse_args()
 
     config = DEFAULT_CONFIG
